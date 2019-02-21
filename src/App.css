@@ -17,6 +17,16 @@
   display: flex;
 }
 
+.App-note {
+  display: flex;
+  flex-direction: row;
+  font-size: 14px;
+}
+
+.App-check {
+  margin-left: 5px;
+}
+
 .App-input {
   height: 20px;
   width: 55px;
@@ -26,14 +36,18 @@
   text-align: center;
 }
 
-.App-check {
+.App-select {
   height: 20px;
   margin-top: 16px;
   margin-left: 5px;
 }
 
-.App-select {
-  height: 20px;
-  margin-top: 16px;
-  margin-left: 5px;
+.App-button-ctn {
+  display: flex;
+}
+
+.App-button {
+  margin: 10px;
+  width: 150px; 
+  height: 30px;
 }
