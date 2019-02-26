@@ -8,27 +8,29 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  /* font-size: calc(5px + 2vmin); */
+  font-size: calc(7px + 1vmin);
   color: white;
 }
 
 .App-entry {
   display: flex;
+  flex-direction: row;
 }
 
 .App-note {
   display: flex;
   flex-direction: row;
-  font-size: 14px;
+  margin: 10px;
 }
 
 .App-check {
   margin-left: 5px;
+  margin-top: 1px;
+  background-color: white;
 }
 
 .App-input {
-  height: 20px;
+  font-size: 15px;
   width: 55px;
   margin-top: 12px;
   margin-left: 5px;
@@ -36,11 +38,54 @@
   text-align: center;
 }
 
-.App-select {
-  height: 20px;
-  margin-top: 16px;
-  margin-left: 5px;
+.App-wrapper {
+  text-align: center;
 }
+  
+.App-ctn {
+  height: 20px;
+  width: 60px;
+  margin-bottom: 2px;
+  margin-top: 15px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+
+.App-selectCtn {
+  height: 20px;
+  width: 225px;
+  margin-top: 10px;
+  margin-left: 5px;
+  background-color: white;
+  color: black;
+  font-size: 14px;
+  text-align: center;
+}
+
+.App-selectListCtn {
+  max-height: 200px; 
+  overflow: auto;
+  font-size: 14px;
+  background-color: white;
+}
+
+.App-selectListItem {
+  color: black;
+}
+.App-selectListItem:hover {
+  background-color: #4b83d8;
+ }
+
+ .App-selectWeightCtn {
+  height: 20px;
+  width: 40px;
+  margin-top: 14px;
+  margin-left: 5px;
+  background-color: white;
+  color: black;
+  font-size: 14px;
+ }
 
 .App-button-ctn {
   display: flex;
@@ -51,3 +96,38 @@
   width: 150px; 
   height: 30px;
 }
+
+.App-footer {
+  font-size: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+}
+
+.App-feeCtn {
+  display: flex;
+  flex-direction: row;
+}
+
+.App-fee {
+  display: flex; 
+  flex-direction: column;
+  border-style: solid;
+  border-width: 2px;
+  padding: 5px;
+  border-radius: 5px;
+  margin: 5px;
+  width: 255px;
+}
+
+.App-FeeLine {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+
