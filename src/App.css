@@ -41,7 +41,18 @@
 .App-wrapper {
   text-align: center;
 }
-  
+
+.App-weightSelectCtn {
+  height: 20px;
+  width: 40px;
+  margin-top: 13px;
+  margin-left: 5px;
+  background-color: white;
+  color: black;
+  font-size: 14px;
+  text-align: center;
+}
+
 .App-ctn {
   height: 20px;
   width: 60px;

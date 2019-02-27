@@ -3,15 +3,19 @@ import { Textbox, Checkbox, Select } from 'react-inputs-validation';
 import 'react-inputs-validation/lib/react-inputs-validation.min.css';
 import './App.css';
 
+var numeral = require('numeral');
+
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       price: '',
+      cost: '',
       length: '',
       width: '',
       height: '',
       weight: '',
+      weightType: '',
       boxWeight: 0,
       totalWeight: 0,
       fbaSizeTier: '',
@@ -62,6 +66,7 @@ class App extends Component {
   reset = () => {
     this.setState({
       price: '',
+      cost: '',
       length: '',
       width: '',
       height: '',
@@ -90,19 +95,65 @@ class App extends Component {
   }
 
   calculateTotal = () => {
-    this.setState({
-      totalFeesJanSept: (this.state.referralFee + this.state.fulfillmentFee + this.state.storageFeeJanSept).toFixed(2),
-      totalProfitJanSept: (this.state.price - this.state.referralFee - this.state.fulfillmentFee - this.state.storageFeeJanSept).toFixed(2),
-      totalFeesOctDec: (this.state.referralFee + this.state.fulfillmentFee + this.state.storageFeeOctDec).toFixed(2),
-      totalProfitOctDec: (this.state.price - this.state.referralFee - this.state.fulfillmentFee - this.state.storageFeeOctDec).toFixed(2),
-    }, () => {
+    if (this.state.clothing) {
       this.setState({
-        profitMarginJanSept: ((this.state.price - this.state.totalFeesJanSept) / this.state.price).toFixed(2),
-        profitMarginOctDec: ((this.state.price - this.state.totalFeesOctDec) / this.state.price).toFixed(2),
-        showFees: true,
-        calculated: true
+        fulfillmentFee: this.state.fulfillmentFee + 0.40
+      }, () => {
+        this.setState({
+          totalFeesJanSept: this.state.referralFee + this.state.fulfillmentFee + this.state.storageFeeJanSept,
+          totalProfitJanSept: this.state.price - this.state.referralFee - this.state.fulfillmentFee - this.state.storageFeeJanSept - this.state.cost,
+          totalFeesOctDec: this.state.referralFee + this.state.fulfillmentFee + this.state.storageFeeOctDec,
+          totalProfitOctDec: this.state.price - this.state.referralFee - this.state.fulfillmentFee - this.state.storageFeeOctDec - this.state.cost,
+        }, () => {
+          this.setState({
+            profitMarginJanSept: ((this.state.price - this.state.totalFeesJanSept - this.state.cost) * 100 / this.state.price).toFixed(2),
+            profitMarginOctDec: ((this.state.price - this.state.totalFeesOctDec - this.state.cost) * 100 / this.state.price).toFixed(2),
+          }, () => {
+            this.setState({
+              showFees: true
+            });
+          });
+        });
       });
-    });
+    } else if (this.state.battery) {
+      this.setState({
+        fulfillmentFee: this.state.fulfillmentFee + 0.11
+      }, () => {
+        this.setState({
+          totalFeesJanSept: this.state.referralFee + this.state.fulfillmentFee + this.state.storageFeeJanSept,
+          totalProfitJanSept: this.state.price - this.state.referralFee - this.state.fulfillmentFee - this.state.storageFeeJanSept - this.state.cost,
+          totalFeesOctDec: this.state.referralFee + this.state.fulfillmentFee + this.state.storageFeeOctDec,
+          totalProfitOctDec: this.state.price - this.state.referralFee - this.state.fulfillmentFee - this.state.storageFeeOctDec - this.state.cost,
+        }, () => {
+          this.setState({
+            profitMarginJanSept: ((this.state.price - this.state.totalFeesJanSept - this.state.cost) * 100 / this.state.price).toFixed(2),
+            profitMarginOctDec: ((this.state.price - this.state.totalFeesOctDec - this.state.cost) * 100 / this.state.price).toFixed(2),
+          }, () => {
+            this.setState({
+              showFees: true
+            });
+          });
+        });
+      });
+    } else {
+      this.setState({
+        totalFeesJanSept: this.state.referralFee + this.state.fulfillmentFee + this.state.storageFeeJanSept,
+        totalProfitJanSept: this.state.price - this.state.referralFee - this.state.fulfillmentFee - this.state.storageFeeJanSept - this.state.cost,
+        totalFeesOctDec: this.state.referralFee + this.state.fulfillmentFee + this.state.storageFeeOctDec,
+        totalProfitOctDec: this.state.price - this.state.referralFee - this.state.fulfillmentFee - this.state.storageFeeOctDec - this.state.cost,
+      }, () => {
+        this.setState({
+          profitMarginJanSept: ((this.state.price - this.state.totalFeesJanSept - this.state.cost) * 100 / this.state.price).toFixed(2),
+          profitMarginOctDec: ((this.state.price - this.state.totalFeesOctDec - this.state.cost) * 100 / this.state.price).toFixed(2),
+        }, () => {
+          this.setState({
+            showFees: true
+          });
+        });
+      });
+    }
+
+
   }
 
   calculateStorageFee = () => {
@@ -124,89 +175,89 @@ class App extends Component {
     if (this.state.fbaSizeTier === "Small Standard") {
       if (shippingWeight <= 0.625) {
         this.setState({
-          fulfillmentFee: this.state.fulfillmentFee = 0 ? 2.41 : this.state.fulfillmentFee + 2.41
+          fulfillmentFee: 2.41
         }, this.calculateStorageFee)
       } else if (shippingWeight > 0.625 && shippingWeight <= 1) {
         this.setState({
-          fulfillmentFee: this.state.fulfillmentFee = 0 ? 2.48 : this.state.fulfillmentFee + 2.48
+          fulfillmentFee: 2.48
         }, this.calculateStorageFee)
       }
     } else if (this.state.fbaSizeTier === "Large Standard") {
       if (shippingWeight <= 0.625) {
         this.setState({
-          fulfillmentFee: this.state.fulfillmentFee = 0 ? 3.19 : this.state.fulfillmentFee + 3.19
+          fulfillmentFee: 3.19
         }, this.calculateStorageFee)
       } else if (shippingWeight > 0.625 && shippingWeight <= 1) {
         this.setState({
-          fulfillmentFee: this.state.fulfillmentFee = 0 ? 3.28 : this.state.fulfillmentFee + 3.28
+          fulfillmentFee: 3.28
         }, this.calculateStorageFee)
       } else if (shippingWeight > 1 && shippingWeight <= 2) {
         this.setState({
-          fulfillmentFee: this.state.fulfillmentFee = 0 ? 4.76 : this.state.fulfillmentFee + 4.76
+          fulfillmentFee: 4.76
         }, this.calculateStorageFee)
       } else if (shippingWeight > 2 && shippingWeight <= 3) {
         this.setState({
-          fulfillmentFee: this.state.fulfillmentFee = 0 ? 5.26 : this.state.fulfillmentFee + 5.26
+          fulfillmentFee: 5.26
         }, this.calculateStorageFee)
       } else if (shippingWeight > 3 && shippingWeight <= 20) {
         let differenceFee = (shippingWeight - 3) * 0.38 + 5.26;
         this.setState({
-          fulfillmentFee: this.state.fulfillmentFee = 0 ? differenceFee : this.state.fulfillmentFee + differenceFee
+          fulfillmentFee: differenceFee
         }, this.calculateStorageFee)
       } else if (shippingWeight > 20 && shippingWeight < 70) {
         console.log(`Your product missed the Large Standard Tier by ${shippingWeight - 20}lbs`)
         let differenceFee = (shippingWeight - 2) * 0.38 + 8.26;
         this.setState({
           fbaSizeTier: 'Small Oversize',
-          fulfillmentFee: this.state.fulfillmentFee = 0 ? differenceFee : this.state.fulfillmentFee + differenceFee
+          fulfillmentFee: differenceFee
         }, this.calculateStorageFee)
       }
     } else if (this.state.fbaSizeTier === "Small Oversize") {
       if (shippingWeight <= 70) {
         let differenceFee = (shippingWeight - 2) * 0.38 + 8.26;
         this.setState({
-          fulfillmentFee: this.state.fulfillmentFee = 0 ? differenceFee : this.state.fulfillmentFee + differenceFee
+          fulfillmentFee: differenceFee
         }, this.calculateStorageFee)
       } else if (shippingWeight > 70) {
         console.log(`Your product missed the Small Oversize Tier by ${shippingWeight - 70}lbs`)
         let differenceFee = (shippingWeight - 2) * 0.39 + 9.79;
         this.setState({
           fbaSizeTier: 'Medium Oversize',
-          fulfillmentFee: this.state.fulfillmentFee = 0 ? differenceFee : this.state.fulfillmentFee + differenceFee
+          fulfillmentFee: differenceFee
         }, this.calculateStorageFee)
       }
     } else if (this.state.fbaSizeTier === "Medium Oversize") {
       if (shippingWeight <= 150) {
         let differenceFee = (shippingWeight - 2) * 0.39 + 9.79;
         this.setState({
-          fulfillmentFee: this.state.fulfillmentFee = 0 ? differenceFee : this.state.fulfillmentFee + differenceFee
+          fulfillmentFee: differenceFee
         }, this.calculateStorageFee)
       } else if (shippingWeight > 150) {
         console.log(`Your product missed the Medium Oversize Tier by ${shippingWeight - 150}lbs`)
         let differenceFee = (shippingWeight - 90) * 0.91 + 137.32;
         this.setState({
           fbaSizeTier: 'Special Oversize',
-          fulfillmentFee: this.state.fulfillmentFee = 0 ? differenceFee : this.state.fulfillmentFee + differenceFee
+          fulfillmentFee: differenceFee
         }, this.calculateStorageFee)
       }
     } else if (this.state.fbaSizeTier === "Large Oversize") {
       if (shippingWeight <= 150) {
         let differenceFee = (shippingWeight - 90) * 0.79 + 75.78;
         this.setState({
-          fulfillmentFee: this.state.fulfillmentFee = 0 ? differenceFee : this.state.fulfillmentFee + differenceFee
+          fulfillmentFee: differenceFee
         }, this.calculateStorageFee)
       } else if (shippingWeight > 150) {
         console.log(`Your product missed the Large Oversize Tier by ${shippingWeight - 150}lbs`)
         let differenceFee = (shippingWeight - 90) * 0.91 + 137.32;
         this.setState({
           fbaSizeTier: 'Special Oversize',
-          fulfillmentFee: this.state.fulfillmentFee = 0 ? differenceFee : this.state.fulfillmentFee + differenceFee
+          fulfillmentFee: differenceFee
         }, this.calculateStorageFee)
       }
     } else if (this.state.fbaSizeTier === "Special Oversize") {
       let differenceFee = (shippingWeight - 90) * 0.91 + 137.32;
       this.setState({
-        fulfillmentFee: this.state.fulfillmentFee = 0 ? differenceFee : this.state.fulfillmentFee + differenceFee
+        fulfillmentFee: differenceFee
       }, this.calculateStorageFee)
     }
   }
@@ -216,6 +267,24 @@ class App extends Component {
     this.setState({
       validate: !this.state.validate
     });
+
+    if (this.state.totalFeesJanSept > 0) {
+      this.setState({
+        boxWeight: 0,
+        totalWeight: 0,
+        fbaSizeTier: '',
+        fulfillmentFee: 0,
+        storageFeeJanSept: 0,
+        storageFeeOctDec: 0,
+        calculated: false,
+        totalFeesJanSept: 0,
+        totalProfitJanSept: 0,
+        totalFeesOctDec: 0,
+        totalProfitOctDec: 0,
+        profitMarginJanSept: 0,
+        profitMarginOctDec: 0
+      });
+    }
 
     if (this.state.price === '' || this.state.length === '' || this.state.width === '' || this.state.height === '' || this.state.weight === '' || this.state.select === '') {
       return;
@@ -228,11 +297,18 @@ class App extends Component {
     let longest = Number(dimensions[0]);
     let median = Number(dimensions[1]);
     let shortest = Number(dimensions[2]);
-    let volume = ((longest * median * shortest)).toFixed(2);
+    let volume = ((longest * median * shortest) / 1728).toFixed(2);
     volume = Number(volume);
     this.setState({ volume });
-    let weight = Number(this.state.weight).toFixed(2);
-    weight = Number(weight);
+    let weight;
+    if (this.state.weightType === 'oz') {
+      weight = Number(this.state.weight / 16).toFixed(2);
+      weight = Number(weight);
+    } else {
+      weight = Number(this.state.weight).toFixed(2);
+      weight = Number(weight);
+    }
+
 
     let dimensionalWeight = ((longest * median * shortest) / 139).toFixed(2);
     dimensionalWeight = Number(dimensionalWeight);
@@ -323,29 +399,15 @@ class App extends Component {
   }
 
   handleInput = (val, e) => {
-    var temp = Number(val)
+    var temp = Number(val);
     this.setState({
-      [e.target.name]: Number(temp.toFixed(2))
+      [e.target.name]: temp
     });
   }
 
   handleCheckbox = (type, e) => {
-    let cost = {
-      battery: 0.11,
-      clothing: 0.40
-    }
     this.setState({
       [type]: !this.state[type]
-    }, () => {
-      if (this.state[type]) {
-        this.setState({
-          fulfillmentFee: this.state.fulfillmentFee + cost[type]
-        });
-      } else {
-        this.setState({
-          fulfillmentFee: this.state.fulfillmentFee - cost[type]
-        });
-      }
     });
   }
 
@@ -522,6 +584,12 @@ class App extends Component {
     }
   }
 
+  handleWeightSelect = (type) => {
+    this.setState({
+      weightType: type
+    });
+  }
+
   render() {
     return (
 
@@ -554,13 +622,34 @@ class App extends Component {
           </div>
 
           <div className="App-entry">
+            <p>Product Cost: $</p>
+            <Textbox
+              type="number"
+              classNameContainer="App-ctn"
+              classNameWrapper="App-wrapper"
+              name="cost"
+              tabIndex='2'
+              validate={this.state.validate}
+              value={this.state.cost}
+              onChange={(val, e) => {
+                this.handleInput(val, e);
+              }}
+              onBlur={() => { }}
+              validationOption={{
+                type: 'number',
+                msgOnError: 'Required'
+              }}
+            />
+          </div>
+
+          <div className="App-entry">
             <p>Product Dimensions:</p>
             <Textbox
               type="number"
               classNameContainer="App-ctn"
               classNameWrapper="App-wrapper"
               name="length"
-              tabIndex='2'
+              tabIndex='3'
               validate={this.state.validate}
               value={this.state.length}
               onChange={(val, e) => {
@@ -578,7 +667,7 @@ class App extends Component {
               classNameContainer="App-ctn"
               classNameWrapper="App-wrapper"
               name="width"
-              tabIndex='3'
+              tabIndex='4'
               validate={this.state.validate}
               value={this.state.width}
               onChange={(val, e) => {
@@ -596,7 +685,7 @@ class App extends Component {
               classNameContainer="App-ctn"
               classNameWrapper="App-wrapper"
               name="height"
-              tabIndex='4'
+              tabIndex='5'
               validate={this.state.validate}
               value={this.state.height}
               onChange={(val, e) => {
@@ -618,7 +707,7 @@ class App extends Component {
               classNameContainer="App-ctn"
               classNameWrapper="App-wrapper"
               name="weight"
-              tabIndex='5'
+              tabIndex='6'
               validate={this.state.validate}
               value={this.state.weight}
               onChange={(val, e) => {
@@ -630,14 +719,28 @@ class App extends Component {
                 msgOnError: 'Required'
               }}
             />
-            <p>lb</p>
+            <Select
+              tabIndex='7'
+              classNameContainer="App-weightSelectCtn"
+              classNameOptionListContainer="App-selectListCtn"
+              classNameOptionListItem="App-selectListItem"
+              classNameWrapper="App-wrapper"
+              value={this.state.weightType}
+              optionList={[
+                { id: "", name: 'lb' },
+                { id: "oz", name: "oz" },
+              ]}
+              onChange={(val, e) => {
+                this.handleWeightSelect(val);
+              }}
+            />
           </div>
 
 
           <div className="App-entry">
             <p>Select Product Category:</p>
             <Select
-              tabIndex='6'
+              tabIndex='8'
               classNameContainer="App-selectCtn"
               classNameOptionListContainer="App-selectListCtn"
               classNameOptionListItem="App-selectListItem"
@@ -724,48 +827,54 @@ class App extends Component {
                 <div> {this.state.fbaSizeTier}</div>
               </div>
               <div className="App-FeeLine">
-                <div>Unit weight: </div>
-                <div>{this.state.weight}lb</div>
+                <div>Unit Weight: </div>
+                <div>{numeral(this.state.weight).format('0.00')}lb</div>
               </div>
               <div className="App-FeeLine">
                 <div>Packaging Weight: </div>
-                <div>{this.state.boxWeight}lb</div>
+                <div>{numeral(this.state.boxWeight).format('0.00')}lb</div>
               </div>
               <div className="App-FeeLine">
-                <div>Shipping weight: </div>
-                <div>{this.state.totalWeight}lb</div>
+                <div>Shipping Weight: </div>
+                <div>{numeral(this.state.totalWeight).format('0.00')}lb</div>
               </div>
               <br />
               <div className="App-FeeLine">
-                <div>Unit price: </div>
-                <div>${this.state.price}</div>
+                <div>Target Price: </div>
+                <div>${numeral(this.state.price).format('0.00')}</div>
+              </div>
+              <div className="App-FeeLine">
+                <div>Unit Cost: </div>
+                <div>${numeral(this.state.cost).format('0.00')}</div>
               </div>
               <div className="App-FeeLine">
                 <div>Amazon Referral Fee: </div>
-                <div>${this.state.addedReferral.amount}</div>
+                <div>${numeral(this.state.referralFee).format('0.00')}</div>
               </div>
               <div className="App-FeeLine">
                 <div>Fulfillment Fee: </div>
-                <div>${this.state.fulfillmentFee}</div>
+                <div>${numeral(this.state.fulfillmentFee).format('0.00')}</div>
               </div>
               <div className="App-FeeLine">
                 <div>Jan to Sept Storage Fees: </div>
-                <div>${this.state.storageFeeJanSept}</div>
+                <div>${numeral(this.state.storageFeeJanSept).format('0.00')}</div>
               </div>
               <br />
               <div className="App-FeeLine">
                 <div>Total Fees: </div>
-                <div>${this.state.totalFeesJanSept}</div>
+                <div>${numeral(this.state.totalFeesJanSept).format('0.00')}</div>
               </div>
               <div className="App-FeeLine">
                 <div>Total Profit: </div>
-                <div>${this.state.totalProfitJanSept}</div>
+                <div>${numeral(this.state.totalProfitJanSept).format('0.00')}</div>
               </div>
               <div className="App-FeeLine">
                 <div>Profit Margin: </div>
-                <div>{this.state.profitMarginJanSept}%</div>
+                <div>{numeral(this.state.profitMarginJanSept).format('0.00')}%</div>
               </div>
             </div>
+
+
             <div className="App-fee">
               <span>October - December:</span>
               <br />
@@ -774,46 +883,50 @@ class App extends Component {
                 <div> {this.state.fbaSizeTier}</div>
               </div>
               <div className="App-FeeLine">
-                <div>Unit weight: </div>
-                <div>{this.state.weight}lb</div>
+                <div>Unit Weight: </div>
+                <div>{numeral(this.state.weight).format('0.00')}lb</div>
               </div>
               <div className="App-FeeLine">
                 <div>Packaging Weight: </div>
-                <div>{this.state.boxWeight}lb</div>
+                <div>{numeral(this.state.boxWeight).format('0.00')}lb</div>
               </div>
               <div className="App-FeeLine">
-                <div>Shipping weight: </div>
-                <div>{this.state.totalWeight}lb</div>
+                <div>Shipping Weight: </div>
+                <div>{numeral(this.state.totalWeight).format('0.00')}lb</div>
               </div>
               <br />
               <div className="App-FeeLine">
-                <div>Unit price: </div>
-                <div>${this.state.price}</div>
+                <div>Target price: </div>
+                <div>${numeral(this.state.price).format('0.00')}</div>
+              </div>
+              <div className="App-FeeLine">
+                <div>Unit Cost: </div>
+                <div>${numeral(this.state.cost).format('0.00')}</div>
               </div>
               <div className="App-FeeLine">
                 <div>Amazon Referral Fee: </div>
-                <div>${this.state.addedReferral.amount}</div>
+                <div>${numeral(this.state.referralFee).format('0.00')}</div>
               </div>
               <div className="App-FeeLine">
                 <div>Fulfillment Fee: </div>
-                <div>${this.state.fulfillmentFee}</div>
+                <div>${numeral(this.state.fulfillmentFee).format('0.00')}</div>
               </div>
               <div className="App-FeeLine">
                 <div>Oct to Dec Storage Fees: </div>
-                <div>${this.state.storageFeeOctDec}</div>
+                <div>${numeral(this.state.storageFeeOctDec).format('0.00')}</div>
               </div>
               <br />
               <div className="App-FeeLine">
                 <div>Total Fees: </div>
-                <div>${this.state.totalFeesOctDec}</div>
+                <div>${numeral(this.state.totalFeesOctDec).format('0.00')}</div>
               </div>
               <div className="App-FeeLine">
                 <div>Total Profit: </div>
-                <div>${this.state.totalProfitOctDec}</div>
+                <div>${numeral(this.state.totalProfitOctDec).format('0.00')}</div>
               </div>
               <div className="App-FeeLine">
                 <div>Profit Margin: </div>
-                <div>{this.state.profitMarginOctDec}%</div>
+                <div>{numeral(this.state.profitMarginOctDec).format('0.00')}%</div>
               </div>
             </div>
 
